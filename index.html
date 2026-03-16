@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Password + Math Gate + Countdown</title>
+  <style>
+    body {
+      background-color: #121212; /* Dark mode */
+      color: #ffffff;            /* Default white text */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: monospace;
+      text-align: center;
+    }
+    .container {
+      text-align: center;
+    }
+    .input-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    input {
+      padding: 8px;
+      background-color: #1e1e1e;
+      border: 1px solid #ffffff;
+      color: #ffffff;
+    }
+    button {
+      padding: 8px 12px;
+      background-color: #ffffff;
+      border: none;
+      color: #121212;
+      cursor: pointer;
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #00ff00; /* Only the code text is green */
+    }
+    #mathSection {
+      display: none; /* Hidden until password is correct */
+      margin-top: 20px;
+    }
+    #passwordSection {
+      margin-top: 20px;
+    }
+    #countdown {
+      font-size: 20px;
+      margin-top: 20px;
+      color: #00ff00;
+    }
+    #message {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ff4444;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="passwordSection">
+      <h2>Enter Password</h2>
+      <div class="input-row">
+        <input type="password" id="passwordInput" placeholder="Password">
+        <button onclick="checkPassword()">Submit</button>
+      </div>
+    </div>
+
+    <div id="mathSection">
+      <h2>SAT‑Style Math Question</h2>
+      <p>What is the largest prime factor of the product of all integers<br>
+         from 1 to 100 that can be written in the form n² + 1 for some integer n?</p>
+      <div class="input-row">
+        <input type="text" id="answerInput" placeholder="Your Answer">
+        <button onclick="checkAnswer()">Submit</button>
+      </div>
+    </div>
+
+    <div id="output"></div>
+    <div id="countdown"></div>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    function checkPassword() {
+      const input = document.getElementById("passwordInput").value;
+      if (input === "Bravys respects you") {
+        document.getElementById("passwordSection").style.display = "none";
+        document.getElementById("mathSection").style.display = "block";
+      } else {
+        const output = document.getElementById("output");
+        output.textContent = "Access Denied";
+        setTimeout(() => { output.textContent = ""; }, 2000);
+      }
+    }
+
+    function checkAnswer() {
+      const input = document.getElementById("answerInput").value.trim();
+      const output = document.getElementById("output");
+      if (input === "97") {
+        output.textContent = "19067";
+        setTimeout(() => { output.textContent = ""; }, 2000);
+      } else {
+        output.textContent = "Wrong Answer";
+        setTimeout(() => { output.textContent = ""; }, 2000);
+      }
+    }
+
+    // Countdown logic
+    // Set deployment time manually when you deploy
+    const deploymentTime = new Date("2026-03-16T22:41:00"); 
+    const deadline = new Date(deploymentTime.getTime() + 24 * 60 * 60 * 1000);
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = deadline - now;
+      const countdownEl = document.getElementById("countdown");
+      const messageEl = document.getElementById("message");
+
+      if (diff <= 0) {
+        countdownEl.textContent = "";
+        messageEl.textContent = "Sorry, you were a bit too late to claim my treasure.";
+        document.getElementById("mathSection").style.display = "none";
+        document.getElementById("passwordSection").style.display = "none";
+      } else {
+        const hours = Math.floor(diff / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+        countdownEl.textContent = `Time left: ${hours}h ${minutes}m ${seconds}s`;
+      }
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
