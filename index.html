@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -172,9 +172,9 @@
       }
     }
 
-    // Countdown logic (20 hours)
-    const deploymentTime = new Date("2026-03-16T22:41:00");
-    const deadline = new Date(deploymentTime.getTime() + 20 * 60 * 60 * 1000);
+    // Countdown logic (48 hours)
+    const deploymentTime = new Date(); // auto-sets to current time
+    const deadline = new Date(deploymentTime.getTime() + 48 * 60 * 60 * 1000);
 
     function updateCountdown() {
       const now = new Date();
