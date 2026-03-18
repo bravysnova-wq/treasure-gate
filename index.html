@@ -1,13 +1,12 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Can you claim my treasure?</title>
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
   <style>
     body {
       background-color: #121212; /* Dark mode */
-      color: #ffffff;            /* Default white text */
+      color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -15,9 +14,7 @@
       font-family: monospace;
       text-align: center;
     }
-    .container {
-      text-align: center;
-    }
+    .container { text-align: center; }
     .input-row {
       display: inline-flex;
       align-items: center;
@@ -41,15 +38,11 @@
       margin-top: 20px;
       font-size: 24px;
       font-weight: bold;
-      color: #00ff00; /* Only the code text is green */
+      color: #00ff00;
     }
-    #mathSection {
-      display: none; /* Hidden until password is correct */
-      margin-top: 20px;
-    }
-    #passwordSection {
-      margin-top: 20px;
-    }
+    #mathSection { display: none; margin-top: 20px; }
+    #passwordSection { display: none; margin-top: 20px; }
+    #idSection { margin-top: 20px; }
     #countdown {
       font-size: 20px;
       margin-top: 20px;
@@ -61,16 +54,41 @@
       color: #ff4444;
       margin-top: 20px;
     }
+    #lockout {
+      font-size: 18px;
+      color: #ffcc00;
+      margin-top: 10px;
+    }
+    #riddle {
+      margin-top: 20px;
+      font-style: italic;
+      color: #00ffff;
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <div id="riddle">
+      I am why you can move in your phone.<br>
+      I have 16 brothers.<br>
+      Find the thing that is related to me and my brothers.
+    </div>
+
+    <div id="idSection">
+      <h2>Enter Your ID</h2>
+      <div class="input-row">
+        <input type="text" id="idInput" placeholder="ID">
+        <button onclick="checkID()">Submit</button>
+      </div>
+    </div>
+
     <div id="passwordSection">
       <h2>Enter Password</h2>
       <div class="input-row">
         <input type="password" id="passwordInput" placeholder="Password">
         <button onclick="checkPassword()">Submit</button>
       </div>
+      <div id="lockout"></div>
     </div>
 
     <div id="mathSection">
@@ -89,16 +107,57 @@
   </div>
 
   <script>
+    let wrongAttempts = 0;
+    let lockoutActive = false;
+
+    function checkID() {
+      const id = document.getElementById("idInput").value.trim();
+      if (id === "2018" || id === "2567") {
+        document.getElementById("idSection").style.display = "none";
+        document.getElementById("passwordSection").style.display = "block";
+      } else {
+        const output = document.getElementById("output");
+        output.textContent = "Invalid ID";
+        setTimeout(() => { output.textContent = ""; }, 2000);
+      }
+    }
+
     function checkPassword() {
+      if (lockoutActive) return;
+
       const input = document.getElementById("passwordInput").value;
       if (input === "Bravys respects you") {
         document.getElementById("passwordSection").style.display = "none";
         document.getElementById("mathSection").style.display = "block";
+        wrongAttempts = 0;
       } else {
+        wrongAttempts++;
         const output = document.getElementById("output");
         output.textContent = "Access Denied";
         setTimeout(() => { output.textContent = ""; }, 2000);
+
+        if (wrongAttempts >= 5) {
+          startLockout();
+        }
       }
+    }
+
+    function startLockout() {
+      lockoutActive = true;
+      let timeLeft = 30;
+      const lockoutEl = document.getElementById("lockout");
+      lockoutEl.textContent = `Too many attempts! Wait ${timeLeft}s`;
+
+      const interval = setInterval(() => {
+        timeLeft--;
+        lockoutEl.textContent = `Too many attempts! Wait ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          lockoutEl.textContent = "";
+          lockoutActive = false;
+          wrongAttempts = 0;
+        }
+      }, 1000);
     }
 
     function checkAnswer() {
@@ -113,10 +172,9 @@
       }
     }
 
-    // Countdown logic
-    // Set deployment time manually when you deploy
-    const deploymentTime = new Date("2026-03-16T22:41:00"); 
-    const deadline = new Date(deploymentTime.getTime() + 20* 60 * 60 * 1000);
+    // Countdown logic (20 hours)
+    const deploymentTime = new Date("2026-03-16T22:41:00");
+    const deadline = new Date(deploymentTime.getTime() + 20 * 60 * 60 * 1000);
 
     function updateCountdown() {
       const now = new Date();
@@ -129,6 +187,7 @@
         messageEl.textContent = "Sorry, you were a bit too late to claim my treasure.";
         document.getElementById("mathSection").style.display = "none";
         document.getElementById("passwordSection").style.display = "none";
+        document.getElementById("idSection").style.display = "none";
       } else {
         const hours = Math.floor(diff / 3600000);
         const minutes = Math.floor((diff % 3600000) / 60000);
